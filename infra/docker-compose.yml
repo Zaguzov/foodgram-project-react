@@ -11,7 +11,7 @@ services:
       - .env
 
   backend:
-    image: sw04er/final_web:latest
+    image: zaguzovalex/final_web:latest
     restart: always
     depends_on:
       - db
@@ -22,7 +22,7 @@ services:
       - .env
 
   frontend:
-    image: sw04er/final_front:latest
+    image: zaguzovalex/final_front:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
