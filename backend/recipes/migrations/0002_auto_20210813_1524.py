@@ -18,7 +18,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='recipe',
             name='pub_date',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now, help_text='Автоматически заполняется сегодняшней датой', verbose_name='Дата публикации'),
+            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now,
+                                       help_text='Автоматически заполняется сегодняшней датой', verbose_name='Дата публикации'),
             preserve_default=False,
         ),
     ]
