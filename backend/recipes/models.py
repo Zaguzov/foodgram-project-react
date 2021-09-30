@@ -6,18 +6,20 @@ from django.core.validators import MinValueValidator
 User = get_user_model()
 
 
-class ColorFieldButUnique(ColorField):
-
-    def __init__(self, *args, **kwargs):
-        kwargs['unique'] = True
-        super().__init__(*args, **kwargs)
-
-
 class Tag(models.Model):
+    GREEN = '#3AFF00'
+    RED = '#FF0800'
+    BLUE = '#0017FF'
+    COLOR_CHOICES = [
+        (GREEN, 'Завтрак'),
+        (RED, 'Обед'),
+        (BLUE, 'Ужин')
+    ]
+
     title = models.CharField(verbose_name="Название",
                              help_text="Название тега", unique=True,
                              max_length=100)
-    color_code = ColorFieldButUnique(default='#FF0000')
+    color_code = ColorField(choices=COLOR_CHOICES)
     slug = models.SlugField(verbose_name="Слаг", unique=True)
 
     class Meta:
