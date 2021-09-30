@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'foodgram_project.urls'
+ROOT_URLCONF = 'foodgram.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -103,7 +103,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'foodgram_project.wsgi.application'
+WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
