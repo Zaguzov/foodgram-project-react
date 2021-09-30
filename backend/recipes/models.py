@@ -66,7 +66,7 @@ class Recipe(models.Model):
                                   through='ReceiptTag',
                                   verbose_name="Теги",
                                   help_text="Выбор из существующих тегов")
-    time = models.TextField(verbose_name="Время приготовления",
+    time = models.PositiveSmallIntegerField(verbose_name="Время приготовления",
                             validators=[MinValueValidator(1)],
                             help_text="Время необходимое для "
                                       "приготовления рецепта")
