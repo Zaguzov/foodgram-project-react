@@ -17,8 +17,8 @@ class Tag(models.Model):
     ]
 
     name = models.CharField(verbose_name="Название",
-                             help_text="Название тега", unique=True,
-                             max_length=100)
+                            help_text="Название тега", unique=True,
+                            max_length=100)
     color = ColorField(choices=COLOR_CHOICES)
     slug = models.SlugField(verbose_name="Слаг", unique=True)
 
@@ -33,10 +33,11 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(verbose_name="Название",
-                             help_text="Название ингредиента", max_length=100)
+                            help_text="Название ингредиента", max_length=100)
     measurement_unit = models.CharField(verbose_name="Единицы измерения",
-                             help_text="Единицы измерения для ингредиента",
-                             max_length=100)
+                                        help_text="Единицы измерения для"
+                                                  "ингредиента",
+                                        max_length=100)
 
     class Meta:
         ordering = ['name', ]
@@ -52,13 +53,13 @@ class Recipe(models.Model):
                                related_name="recipes", verbose_name="Автор",
                                help_text="Выбор из существующих пользователей")
     name = models.CharField(verbose_name="Название",
-                             help_text="Название рецепта", max_length=100)
+                            help_text="Название рецепта", max_length=100)
     image = models.ImageField(upload_to='recipes/images',
                               blank=True, null=True,
                               verbose_name="Картинка к рецепту",
                               help_text="Загрузить выбранную")
     text = models.TextField(verbose_name="Описание",
-                                   help_text="Описание рецепта")
+                            help_text="Описание рецепта")
     ingredients = models.ManyToManyField(Ingredient,
                                          verbose_name="Ингредиенты",
                                          help_text="Выбор из "

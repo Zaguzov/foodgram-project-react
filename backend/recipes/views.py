@@ -152,7 +152,7 @@ class DownloadShoppingCart(APIView):
                     }
                 else:
                     buying_list[name]['amount'] = (buying_list[name]
-                                                    ['amount'] + amount)
+                                                   ['amount'] + amount)
 
         wishlist = []
         for item in buying_list:
