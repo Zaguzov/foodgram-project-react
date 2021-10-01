@@ -24,7 +24,7 @@ class RecipeAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
     def count_favorite(self, obj):
-        return obj.favorite_set.count()
+        return obj.favorite.count()
 
 
 @admin.register(Ingredient)
