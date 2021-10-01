@@ -22,7 +22,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'tags',
     )
     empty_value_display = '-пусто-'
-    
+
     def count_favorite(self, obj):
         return obj.favorite_set.count()
 
