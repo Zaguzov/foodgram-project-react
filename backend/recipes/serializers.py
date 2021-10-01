@@ -5,16 +5,8 @@ from rest_framework.generics import get_object_or_404
 
 from users.serializers import UserDetailSerializer
 from .fields import Base64ImageField
-from .models import (
-    Tag,
-    Ingredient,
-    Recipe,
-    IngredientInRecipe,
-    ReceiptTag,
-    Follow,
-    Favorite,
-    ShoppingCart
-)
+from .models import (Tag, Ingredient, Recipe, RecipeIngredient, ReceiptTag,
+                     Follow, Favorite, ShoppingCart)
 
 User = get_user_model()
 
@@ -67,7 +59,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = IngredientInRecipe
+        model = RecipeIngredient
         fields = (
             'id',
             'name',
@@ -76,10 +68,10 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_ingredients(self, obj):
-        qs = IngredientInRecipe.objects.filter(recipe=obj)
+        qs = RecipeIngredient.objects.filter(recipe=obj)
         return IngredientInRecipeSerializer(qs, many=True).data
 
-    def get_is_favorited(self, obj):
+    def get_is_favorite(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
@@ -101,7 +93,7 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
     amount = serializers.IntegerField()
 
     class Meta:
-        model = IngredientInRecipe
+        model = RecipeIngredient
         fields = (
             'id',
             'amount'
@@ -113,7 +105,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    is_favorited = serializers.SerializerMethodField()
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -122,7 +114,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
             'tags',
             'author',
             'ingredients',
-            'is_favorited',
+            'is_favorite',
             'is_in_shopping_cart',
             'name',
             'image',
@@ -131,12 +123,12 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_ingredients(self, obj):
-        record = IngredientInRecipe.objects.filter(recipe=obj)
+        record = RecipeIngredient.objects.filter(recipe=obj)
         return IngredientInRecipeSerializer(
             record,
             many=True).data
 
-    def get_is_favorited(self, obj):
+    def get_is_favorite(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
@@ -186,8 +178,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         for item in ingredients:
             if int(item['amount']) < 0:
                 raise serializers.ValidationError(
-                    {'ingredients': ('Убедитесь, что значение количества '
-                                     + 'ингредиента больше 0')})
+                    {'ingredients': ('Проверьте, что значение количества '
+                                     + 'ингредиента положительное число')})
         return data
 
     def validate_time(self, data):
@@ -205,7 +197,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients_data:
             ingredient_model = ingredient['id']
             amount = ingredient['amount']
-            IngredientInRecipe.objects.create(
+            RecipeIngredient.objects.create(
                 ingredient=ingredient_model,
                 recipe=recipe,
                 amount=amount
@@ -223,9 +215,9 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 recipe=instance,
                 tag=tag
             )
-        IngredientInRecipe.objects.filter(recipe=instance).delete()
+        RecipeIngredient.objects.filter(recipe=instance).delete()
         for new_ingredient in ingredient_data:
-            IngredientInRecipe.objects.create(
+            RecipeIngredient.objects.create(
                 ingredient=new_ingredient['id'],
                 recipe=instance,
                 amount=new_ingredient['amount']

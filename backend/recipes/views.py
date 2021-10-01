@@ -8,25 +8,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import RecipeFilter, IngredientFilter
-from .models import (Tag,
-                     Ingredient,
-                     Recipe,
-                     Favorite,
-                     ShoppingCart,
-                     IngredientInRecipe,
-                     Follow
-                     )
+from .models import (Tag, Ingredient, Recipe, Favorite, ShoppingCart,
+                     RecipeIngredient, Follow)
 from .paginators import CustomPageNumberPaginator
 from .permissions import AdminOrAuthorOrReadOnly
-from .serializers import (TagSerializer,
-                          IngredientSerializer,
-                          ShowRecipeSerializer,
-                          CreateRecipeSerializer,
-                          FavoriteSerializer,
-                          ShoppingCartSerializer,
-                          ShowFollowSerializer,
-                          FollowSerializer
-                          )
+from .serializers import (TagSerializer, IngredientSerializer,
+                          ShowRecipeSerializer, CreateRecipeSerializer,
+                          FavoriteSerializer, ShoppingCartSerializer,
+                          ShowFollowSerializer, FollowSerializer)
 
 User = get_user_model()
 
@@ -137,7 +126,7 @@ class DownloadShoppingCart(APIView):
         buying_list = {}
 
         for item in shopping_cart:
-            ingredients = IngredientInRecipe.objects.filter(
+            ingredients = RecipeIngredient.objects.filter(
                 recipe=item.recipe
             )
             for ingredient in ingredients:
