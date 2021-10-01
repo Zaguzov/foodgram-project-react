@@ -10,16 +10,13 @@ class RecipeAdmin(admin.ModelAdmin):
               'image',
               'text',
               'cooking_time',
-              'tags',
               )
-    exclude = 'tags'
     readonly_fields = (
         'pub_date',
     )
     list_filter = (
         'author',
         'name',
-        'tags',
     )
     empty_value_display = '-пусто-'
 
