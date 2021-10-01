@@ -71,7 +71,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
         qs = RecipeIngredient.objects.filter(recipe=obj)
         return IngredientInRecipeSerializer(qs, many=True).data
 
-    def get_is_favorite(self, obj):
+    def get_is_favorited(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
@@ -105,7 +105,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    is_favorite = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -114,7 +114,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
             'tags',
             'author',
             'ingredients',
-            'is_favorite',
+            'is_favorited',
             'is_in_shopping_cart',
             'name',
             'image',
@@ -128,7 +128,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
             record,
             many=True).data
 
-    def get_is_favorite(self, obj):
+    def get_is_favorited(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
