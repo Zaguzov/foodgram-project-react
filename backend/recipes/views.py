@@ -142,22 +142,22 @@ class DownloadShoppingCart(APIView):
             )
             for ingredient in ingredients:
                 amount = ingredient.amount
-                title = ingredient.ingredient.title
-                units = ingredient.ingredient.units
+                name = ingredient.ingredient.name
+                measurement_unit = ingredient.ingredient.measurement_unit
 
-                if title not in buying_list:
-                    buying_list[title] = {
-                        'units': units,
+                if name not in buying_list:
+                    buying_list[name] = {
+                        'measurement_unit': measurement_unit,
                         'amount': amount
                     }
                 else:
-                    buying_list[title]['amount'] = (buying_list[title]
+                    buying_list[name]['amount'] = (buying_list[name]
                                                     ['amount'] + amount)
 
         wishlist = []
         for item in buying_list:
             wishlist.append(f'{item} - {buying_list[item]["amount"]} '
-                            f'{buying_list[item]["units"]} \n')
+                            f'{buying_list[item]["measurement_unit"]} \n')
 
         response = HttpResponse(wishlist, 'Content-Type: text/plain')
         response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'

@@ -6,10 +6,10 @@ from .models import Recipe, Ingredient, Tag, ShoppingCart, Favorite
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     fields = ('author',
-              'title',
+              'name',
               'image',
-              'description',
-              'time',
+              'text',
+              'cooking_time',
               )
     readonly_fields = (
         'pub_date',
@@ -20,8 +20,8 @@ class RecipeAdmin(admin.ModelAdmin):
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     fields = (
-        'title',
-        'units'
+        'name',
+        'measurement_unit'
     )
     empty_value_display = '-пусто-'
 
@@ -29,8 +29,8 @@ class IngredientAdmin(admin.ModelAdmin):
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     fields = (
-        'title',
-        'color_code',
+        'name',
+        'color',
         'slug'
     )
     empty_value_display = '-пусто-'

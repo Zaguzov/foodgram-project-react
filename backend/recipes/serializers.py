@@ -26,9 +26,9 @@ class ShowRecipeAddedSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'id',
-            'title',
+            'name',
             'image',
-            'time'
+            'cooking_time'
         )
         read_only_fields = fields
 
@@ -43,8 +43,8 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = (
             'id',
-            'title',
-            'color_code',
+            'name',
+            'color',
             'slug'
         )
 
@@ -54,24 +54,24 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = (
             'id',
-            'title',
-            'units'
+            'name',
+            'measurement_unit'
         )
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
-    title = serializers.ReadOnlyField(source='ingredient.title')
+    name = serializers.ReadOnlyField(source='ingredient.name')
     unit = serializers.ReadOnlyField(
-        source='ingredient.units'
+        source='ingredient.measurement_unit'
     )
 
     class Meta:
         model = IngredientInRecipe
         fields = (
             'id',
-            'title',
-            'units',
+            'name',
+            'measurement_unit',
             'amount'
         )
 
@@ -124,10 +124,10 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
             'ingredients',
             'is_favorited',
             'is_in_shopping_cart',
-            'title',
+            'name',
             'image',
-            'description',
-            'time'
+            'text',
+            'cooking_time'
         )
 
     def get_ingredients(self, obj):
@@ -166,7 +166,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
-    time = serializers.IntegerField()
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
@@ -175,10 +175,10 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             'tags',
             'author',
             'ingredients',
-            'title',
+            'name',
             'image',
-            'description',
-            'time'
+            'text',
+            'cooking_time'
         )
 
     def validate(self, data):
@@ -230,11 +230,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 recipe=instance,
                 amount=new_ingredient['amount']
             )
-        instance.title = validated_data.pop('title')
-        instance.description = validated_data.pop('description')
+        instance.name = validated_data.pop('name')
+        instance.text = validated_data.pop('text')
         if validated_data.get('image') is not None:
             instance.image = validated_data.pop('image')
-        instance.time = validated_data.pop('time')
+        instance.cooking_time = validated_data.pop('cooking_time')
         instance.save()
         return instance
 

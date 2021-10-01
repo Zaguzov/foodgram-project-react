@@ -16,10 +16,10 @@ class Tag(models.Model):
         (BLUE, 'Ужин')
     ]
 
-    title = models.CharField(verbose_name="Название",
+    name = models.CharField(verbose_name="Название",
                              help_text="Название тега", unique=True,
                              max_length=100)
-    color_code = ColorField(choices=COLOR_CHOICES)
+    color = ColorField(choices=COLOR_CHOICES)
     slug = models.SlugField(verbose_name="Слаг", unique=True)
 
     class Meta:
@@ -28,50 +28,51 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Ingredient(models.Model):
-    title = models.CharField(verbose_name="Название",
+    name = models.CharField(verbose_name="Название",
                              help_text="Название ингредиента", max_length=100)
-    units = models.CharField(verbose_name="Единицы измерения",
+    measurement_unit = models.CharField(verbose_name="Единицы измерения",
                              help_text="Единицы измерения для ингредиента",
                              max_length=100)
 
     class Meta:
-        ordering = ['title', ]
+        ordering = ['name', ]
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.title} {self.units}'
+        return f'{self.name} {self.measurement_unit}'
 
 
 class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name="recipes", verbose_name="Автор",
                                help_text="Выбор из существующих пользователей")
-    title = models.CharField(verbose_name="Название",
+    name = models.CharField(verbose_name="Название",
                              help_text="Название рецепта", max_length=100)
     image = models.ImageField(upload_to='recipes/images',
                               blank=True, null=True,
                               verbose_name="Картинка к рецепту",
                               help_text="Загрузить выбранную")
-    description = models.TextField(verbose_name="Описание",
+    text = models.TextField(verbose_name="Описание",
                                    help_text="Описание рецепта")
-    ingredients = models.ManyToManyField("Ingredient",
+    ingredients = models.ManyToManyField(Ingredient,
                                          verbose_name="Ингредиенты",
                                          help_text="Выбор из "
                                                    "существующих ингредиентов",
                                          through="IngredientInRecipe")
-    tags = models.ManyToManyField("Tag",
+    tags = models.ManyToManyField(Tag,
                                   through='ReceiptTag',
                                   verbose_name="Теги",
                                   help_text="Выбор из существующих тегов")
-    time = models.PositiveSmallIntegerField(verbose_name="Время приготовления",
-                                            validators=[MinValueValidator(1)],
-                                            help_text="Время необходимое для "
-                                                      "приготовления рецепта")
+    cooking_time = models.PositiveSmallIntegerField(
+        verbose_name="Время приготовления",
+        validators=[MinValueValidator(1)],
+        help_text="Время необходимое для приготовления рецепта"
+    )
     pub_date = models.DateTimeField(verbose_name="Дата публикации",
                                     auto_now_add=True,
                                     help_text="Автоматически заполняется "
@@ -84,7 +85,7 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
-        return f'{self.author}: {self.title}'
+        return f'{self.author}: {self.name}'
 
 
 class IngredientInRecipe(models.Model):
