@@ -10,11 +10,20 @@ class RecipeAdmin(admin.ModelAdmin):
               'image',
               'text',
               'cooking_time',
+              'tags',
+              'count_favorite'
               )
     readonly_fields = (
         'pub_date',
     )
+    list_filter = (
+        'author',
+        'name',
+        'tags',
+    )
     empty_value_display = '-пусто-'
+    def count_favorite(self, obj):
+        return obj.favorite_set.count()
 
 
 @admin.register(Ingredient)
@@ -22,6 +31,9 @@ class IngredientAdmin(admin.ModelAdmin):
     fields = (
         'name',
         'measurement_unit'
+    )
+    list_filter = (
+        'name',
     )
     empty_value_display = '-пусто-'
 
@@ -44,10 +56,6 @@ class FavoriteAdmin(admin.ModelAdmin):
         'recipe',
         'added_date'
     )
-    search_fields = (
-        'user',
-        'recipe'
-    )
 
 
 @admin.register(ShoppingCart)
@@ -57,8 +65,4 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         'user',
         'recipe',
         'added_date'
-    )
-    search_fields = (
-        'user',
-        'recipe'
     )

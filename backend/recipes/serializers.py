@@ -182,7 +182,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                                      + 'ингредиента положительное число')})
         return data
 
-    def validate_time(self, data):
+    def validate_cocking_time(self, data):
         if data <= 0:
             raise serializers.ValidationError(
                 'Введите целое число больше 0 для времени готовки'

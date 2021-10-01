@@ -9,8 +9,4 @@ class User(admin.ModelAdmin):
         'email',
         'username',
     )
-    search_fields = (
-        'email',
-        'username',
-    )
     empty_value_display = '-пусто-'
