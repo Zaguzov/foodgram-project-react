@@ -11,7 +11,6 @@ class RecipeAdmin(admin.ModelAdmin):
               'text',
               'cooking_time',
               'tags',
-              'count_favorite'
               )
     readonly_fields = (
         'pub_date',
@@ -22,9 +21,6 @@ class RecipeAdmin(admin.ModelAdmin):
         'tags',
     )
     empty_value_display = '-пусто-'
-
-    def count_favorite(self, obj):
-        return obj.favorite.count()
 
 
 @admin.register(Ingredient)
