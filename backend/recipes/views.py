@@ -124,7 +124,7 @@ class DownloadShoppingCart(APIView):
     def get(self, request):
         buying_list = {}
         ingredients = RecipeIngredient.objects.filter(
-            recipe__shopping_cart__author=request.user).values_list(
+            recipe__shopping_cart__user=request.user).values_list(
             'ingredients__name', 'amount', 'ingredients__measurement_unit')
         for ingredient in ingredients:
             amount = ingredient.amount

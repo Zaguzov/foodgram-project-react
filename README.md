@@ -1,4 +1,9 @@
 # praktikum_new_diplom
+
+Сервис Foodgram «Продуктовый помощник» это дипломный проект Яндекс Практикума.
+
+На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
+
 http://84.201.142.253/ - развёрнутый проект
 
 http://84.201.142.253/admin/ - админка
@@ -26,14 +31,6 @@ DB_HOST=postgresql
 DB_PORT=5432
 
 Из каталога infra выполните docker-compose up -d
-
-docker-compose exec backend python manage.py makemigrations --noinput users
-
-docker-compose exec backend python manage.py migrate --noinput users
-
-docker-compose exec backend python manage.py makemigrations --noinput recipes
-
-docker-compose exec backend python manage.py migrate --noinput recipes
 
 docker-compose exec backend python manage.py migrate --noinput
 
