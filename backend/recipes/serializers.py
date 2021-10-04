@@ -180,7 +180,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Добавьте хотя бы один '
                                               'ингредиент')
         for item in ingredients:
-            if int(item['amount']) < 0:
+            try:
+                amount = int(item['amount'])
+            except ValueError:
+                raise serializers.ValidationError('Кол-во должно быть числом')
+            if amount < 0:
                 raise serializers.ValidationError('Проверьте, что значение '
                                                   'количества ингредиента '
                                                   'положительное число')
@@ -205,9 +209,15 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return data
 
     def validate_cooking_time(self, data):
-        if data <= 0:
+        try:
+            cooking_time = float(data)
+        except ValueError:
             raise serializers.ValidationError(
-                'Введите целое число больше 0 для времени готовки'
+                'Время приготовления должно быть числом'
+            )
+        if cooking_time <= 0:
+            raise serializers.ValidationError(
+                'Введите целое число больше 0 для времени приготовления'
             )
         return data
 
