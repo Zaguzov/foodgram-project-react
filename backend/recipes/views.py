@@ -122,7 +122,6 @@ class DownloadShoppingCart(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        shopping_cart = request.user.shopping_cart.all()
         buying_list = {}
         ingredients = RecipeIngredient.objects.filter(
             recipe__shopping_cart__author=request.user).values_list(
@@ -139,8 +138,7 @@ class DownloadShoppingCart(APIView):
                 }
             else:
                 buying_list[name]['amount'] = (buying_list[name]
-                                                ['amount'] + amount)
-
+                                               ['amount'] + amount)
         wishlist = []
         for item in buying_list:
             wishlist.append(f'{item} - {buying_list[item]["amount"]} '
