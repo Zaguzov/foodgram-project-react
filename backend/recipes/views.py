@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, generics
@@ -125,20 +126,16 @@ class DownloadShoppingCart(APIView):
         buying_list = {}
         ingredients = RecipeIngredient.objects.filter(
             recipe__shopping_cart__user=request.user).values_list(
-            'ingredients__name', 'amount', 'ingredients__measurement_unit')
+            'ingredient__name', 'amount', 'ingredient__measurement_unit')
+        ingredients = ingredients.values(
+            'ingredient__name', 'ingredient__measurement_unit'
+        ).annotate(total=Sum('amount'))
         for ingredient in ingredients:
             amount = ingredient.amount
             name = ingredient.name
             measurement_unit = ingredient.measurement_unit
-
-            if name not in buying_list:
-                buying_list[name] = {
-                    'measurement_unit': measurement_unit,
-                    'amount': amount
-                }
-            else:
-                buying_list[name]['amount'] = (buying_list[name]
-                                               ['amount'] + amount)
+            buying_list[name] = {'measurement_unit': measurement_unit,
+                                 'amount': amount}
         wishlist = []
         for item in buying_list:
             wishlist.append(f'{item} - {buying_list[item]["amount"]} '
