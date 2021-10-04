@@ -56,7 +56,7 @@ class Recipe(models.Model):
                                   through='ReceiptTag',
                                   verbose_name='Теги',
                                   help_text='Выбор из существующих тегов')
-    cooking_time = models.PositiveSmallIntegerField(
+    cooking_time = models.IntegerField(
         verbose_name='Время приготовления',
         help_text='Время необходимое для приготовления рецепта'
     )
