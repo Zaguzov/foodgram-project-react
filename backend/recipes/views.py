@@ -124,24 +124,22 @@ class DownloadShoppingCart(APIView):
     def get(self, request):
         shopping_cart = request.user.shopping_cart.all()
         buying_list = {}
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__shopping_cart__author=request.user).values_list(
+            'ingredients__name', 'amount', 'ingredients__measurement_unit')
+        for ingredient in ingredients:
+            amount = ingredient.amount
+            name = ingredient.name
+            measurement_unit = ingredient.measurement_unit
 
-        for item in shopping_cart:
-            ingredients = RecipeIngredient.objects.filter(
-                recipe=item.recipe
-            )
-            for ingredient in ingredients:
-                amount = ingredient.amount
-                name = ingredient.ingredient.name
-                measurement_unit = ingredient.ingredient.measurement_unit
-
-                if name not in buying_list:
-                    buying_list[name] = {
-                        'measurement_unit': measurement_unit,
-                        'amount': amount
-                    }
-                else:
-                    buying_list[name]['amount'] = (buying_list[name]
-                                                   ['amount'] + amount)
+            if name not in buying_list:
+                buying_list[name] = {
+                    'measurement_unit': measurement_unit,
+                    'amount': amount
+                }
+            else:
+                buying_list[name]['amount'] = (buying_list[name]
+                                                ['amount'] + amount)
 
         wishlist = []
         for item in buying_list:

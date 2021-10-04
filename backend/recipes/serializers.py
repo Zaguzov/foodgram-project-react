@@ -175,19 +175,45 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
+        ingredients_ids = []
+        if len(ingredients) == 0:
+            raise serializers.ValidationError('Добавьте хотя бы один '
+                                              'ингредиент')
         for item in ingredients:
             if int(item['amount']) < 0:
-                raise serializers.ValidationError(
-                    {'ingredients': ('Проверьте, что значение количества '
-                                     + 'ингредиента положительное число')})
+                raise serializers.ValidationError('Проверьте, что значение '
+                                                  'количества ингредиента '
+                                                  'положительное число')
+            elif item['id'] in ingredients_ids:
+                raise serializers.ValidationError('Ингредиенты не должны '
+                                                  'повторятся')
+            else:
+                ingredients_ids.append(item['id'])
         return data
 
-    def validate_cocking_time(self, data):
+    def validate_tags(self, data):
+        tags = self.initial_data.get('tags')
+        if len(tags) == 0:
+            raise serializers.ValidationError('Добавьте хотя бы один тег')
+        unique_id_tags = dict()
+        for item in tags:
+            pk = item
+            if pk in unique_id_tags:
+                raise serializers.ValidationError('Нельзя добавлять '
+                                                  'одинаковые теги')
+            unique_id_tags[pk] = 0
+        return data
+
+    def validate_coocking_time(self, data):
         if data <= 0:
             raise serializers.ValidationError(
                 'Введите целое число больше 0 для времени готовки'
             )
         return data
+
+    def add_tags(self, tags, recipe):
+        for tag in tags:
+            ReceiptTag.objects.create(recipe=recipe, tag=tag)
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags')
@@ -202,19 +228,14 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 recipe=recipe,
                 amount=amount
             )
-        for tag in tags_data:
-            ReceiptTag.objects.create(recipe=recipe, tag=tag)
+        self.add_tags(tags_data, recipe)
         return recipe
 
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags')
         ingredient_data = validated_data.pop('ingredients')
         ReceiptTag.objects.filter(recipe=instance).delete()
-        for tag in tags_data:
-            ReceiptTag.objects.create(
-                recipe=instance,
-                tag=tag
-            )
+        self.add_tags(tags_data, instance)
         RecipeIngredient.objects.filter(recipe=instance).delete()
         for new_ingredient in ingredient_data:
             RecipeIngredient.objects.create(

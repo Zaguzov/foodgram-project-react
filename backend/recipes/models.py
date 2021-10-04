@@ -7,10 +7,10 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    name = models.CharField(verbose_name="Название тега",
+    name = models.CharField(verbose_name='Название тега',
                             max_length=100)
     color = ColorField()
-    slug = models.SlugField(verbose_name="Слаг")
+    slug = models.SlugField(verbose_name='Слаг')
 
     class Meta:
         ordering = ['id', ]
@@ -22,10 +22,10 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField(verbose_name="Название ингредиента",
+    name = models.CharField(verbose_name='Название ингредиента',
                             max_length=100)
-    measurement_unit = models.CharField(verbose_name="Единицы измерения "
-                                                     "для ингредиента",
+    measurement_unit = models.CharField(verbose_name='Единицы измерения '
+                                                     'для ингредиента',
                                         max_length=100)
 
     class Meta:
@@ -39,37 +39,37 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,
-                               related_name="recipes", verbose_name="Автор",
-                               help_text="Выбор из существующих пользователей")
-    name = models.CharField(verbose_name="Название",
-                            help_text="Название рецепта", max_length=100)
+                               related_name='recipes', verbose_name='Автор',
+                               help_text='Выбор из существующих пользователей')
+    name = models.CharField(verbose_name='Название',
+                            help_text='Название рецепта', max_length=100)
     image = models.ImageField(upload_to='recipes/images',
-                              verbose_name="Картинка к рецепту",
-                              help_text="Загрузить выбранную")
-    text = models.TextField(verbose_name="Описание",
-                            help_text="Описание рецепта", max_length=10000)
+                              verbose_name='Картинка к рецепту',
+                              help_text='Загрузить выбранную')
+    text = models.TextField(verbose_name='Описание',
+                            help_text='Описание рецепта', max_length=10000)
     ingredients = models.ManyToManyField(Ingredient,
-                                         verbose_name="Ингредиенты",
-                                         help_text="Выбор из "
-                                                   "существующих ингредиентов",
-                                         through="RecipeIngredient")
+                                         verbose_name='Ингредиенты',
+                                         help_text='Выбор из '
+                                                   'существующих ингредиентов',
+                                         through='RecipeIngredient')
     tags = models.ManyToManyField(Tag,
                                   through='ReceiptTag',
-                                  verbose_name="Теги",
-                                  help_text="Выбор из существующих тегов")
+                                  verbose_name='Теги',
+                                  help_text='Выбор из существующих тегов')
     cooking_time = models.PositiveSmallIntegerField(
-        verbose_name="Время приготовления",
+        verbose_name='Время приготовления',
         validators=[MinValueValidator(1)],
-        help_text="Время необходимое для приготовления рецепта"
+        help_text='Время необходимое для приготовления рецепта'
     )
-    pub_date = models.DateTimeField(verbose_name="Дата публикации",
+    pub_date = models.DateTimeField(verbose_name='Дата публикации',
                                     auto_now_add=True,
-                                    help_text="Автоматически заполняется "
-                                              "сегодняшней датой",
+                                    help_text='Автоматически заполняется '
+                                              'сегодняшней датой',
                                     db_index=True)
 
     class Meta:
-        ordering = ["-pub_date"]
+        ordering = ['-pub_date']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -89,6 +89,12 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиенты'
         verbose_name_plural = verbose_name
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ingredient', 'recipe'],
+                name='unique_recipe'
+            )
+        ]
 
 
 class ReceiptTag(models.Model):
@@ -106,6 +112,12 @@ class ReceiptTag(models.Model):
     class Meta:
         verbose_name = 'Теги'
         verbose_name_plural = verbose_name
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'tag'],
+                name='unique_tagging'
+            )
+        ]
 
 
 class Follow(models.Model):
