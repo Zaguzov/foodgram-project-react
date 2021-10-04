@@ -181,10 +181,10 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                                               'ингредиент')
         for item in ingredients:
             try:
-                amount = int(item['amount'])
+                amount = int(item.get('amount'))
             except ValueError:
                 raise serializers.ValidationError('Кол-во должно быть числом')
-            if amount < 0:
+            if amount <= 0:
                 raise serializers.ValidationError('Проверьте, что значение '
                                                   'количества ингредиента '
                                                   'положительное число')
