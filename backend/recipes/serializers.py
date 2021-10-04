@@ -204,7 +204,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             unique_id_tags[pk] = 0
         return data
 
-    def validate_coocking_time(self, data):
+    def validate_cooking_time(self, data):
         if data <= 0:
             raise serializers.ValidationError(
                 'Введите целое число больше 0 для времени готовки'
