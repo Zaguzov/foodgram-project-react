@@ -131,6 +131,7 @@ class DownloadShoppingCart(APIView):
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(total=Sum('amount'))
         for ingredient in ingredients:
+            print(ingredient)
             amount = ingredient.total
             name = ingredient.name
             measurement_unit = ingredient.measurement_unit
