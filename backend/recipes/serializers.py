@@ -225,12 +225,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         for tag in tags:
             ReceiptTag.objects.create(recipe=recipe, tag=tag)
 
-    def create(self, validated_data):
-        tags_data = validated_data.pop('tags')
-        ingredients_data = validated_data.pop('ingredients')
-        author = self.context.get('request').user
-        recipe = Recipe.objects.create(author=author, **validated_data)
-        for ingredient in ingredients_data:
+    def add_ingredient(self, ingredients, recipe):
+        for ingredient in ingredients:
             ingredient_model = ingredient['id']
             amount = ingredient['amount']
             RecipeIngredient.objects.create(
@@ -238,6 +234,13 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 recipe=recipe,
                 amount=amount
             )
+
+    def create(self, validated_data):
+        tags_data = validated_data.pop('tags')
+        ingredients_data = validated_data.pop('ingredients')
+        author = self.context.get('request').user
+        recipe = Recipe.objects.create(author=author, **validated_data)
+        self.add_ingredient(ingredients_data, recipe)
         self.add_tags(tags_data, recipe)
         return recipe
 
@@ -247,12 +250,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         ReceiptTag.objects.filter(recipe=instance).delete()
         self.add_tags(tags_data, instance)
         RecipeIngredient.objects.filter(recipe=instance).delete()
-        for new_ingredient in ingredient_data:
-            RecipeIngredient.objects.create(
-                ingredient=new_ingredient['id'],
-                recipe=instance,
-                amount=new_ingredient['amount']
-            )
+        self.add_ingredient(ingredient_data, instance)
         instance.name = validated_data.pop('name')
         instance.text = validated_data.pop('text')
         if validated_data.get('image') is not None:
